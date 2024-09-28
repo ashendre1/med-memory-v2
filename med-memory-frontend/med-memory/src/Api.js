@@ -29,3 +29,4 @@ export const registerUser = (data) => apiCall('/register/addUser', 'POST', data)
 export const loginUser = (data) => apiCall('/register/authenticate', 'GET', data);
 export const checkSession = () => apiCall('/userSession/check-session', 'GET');
 export const uploadPrescription = (data) => apiCall('/prescription/upload', 'POST', data);
+export const getPatientDetails = () => apiCall('/register/getPatients', 'GET');

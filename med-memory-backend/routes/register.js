@@ -139,17 +139,25 @@ register.get('/getPatients', async (req, res) => {
         if(documents.length > 0){
             const doc = documents[0];
             const associated = doc.associated;
+            const associatedDetails = [];
 
-            if(associated.includes(req.body.patientName)){
+            for (const username of associated) {
+                const userSnapshot = await db.collection('userDetails')
+                    .where('username', '==', username)
+                    .get();
 
-
-            } else {
-                const response = {
-                    message: 'You do not have access to this patient',
-                    status: 205
+                const userDocs = userSnapshot.docs.map(doc => doc.data());
+                if (userDocs.length > 0) {
+                    let toadd = {};
+                    toadd.username = userDocs[0].username;
+                    toadd.dob = userDocs[0].dob;
+                    toadd.gender = userDocs[0].gender;
+                    toadd.blood_group = userDocs[0].blood_group;
+                    associatedDetails.push(toadd);
                 }
-                res.status(200).json(response);
             }
+
+            res.status(200).json(associatedDetails);
             
         } else {
             res.status(404).json({message: 'User not found'});
