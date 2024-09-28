@@ -48,5 +48,21 @@ Content-Type: application/json
 GET http://localhost:9090/reports/getReports?username=watson
 
 
-### upload
-curl -X POST -F "image=@C:/Users/Shendre/OneDrive/Pictures/Screenshots/Screenshot (119).png" http://localhost:9090/prescription/upload
+### bulk add reports
+POST http://localhost:9090/reports/bulkAddReports
+Content-Type: application/json
+
+[
+    {
+        "platelets": 300000,
+            "RBC": 5.5,
+            "hemoglobin": 15,
+            "date": "2023-12-12"
+    },
+    {
+            "platelets": 250000,
+            "RBC": 5.5,
+            "hemoglobin": 15,
+            "date": "2023-12-12"
+    }
+]

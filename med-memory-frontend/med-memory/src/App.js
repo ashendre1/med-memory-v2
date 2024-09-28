@@ -7,6 +7,7 @@ import DoctorDashboard from './Components/DoctorDashboard/doctor.jsx';
 import PatientHome from './Components/PatientHome/patienthome.jsx';
 import { checkSession } from './Api';
 
+
 const ProtectedRoute = ({ element: Component, ...rest }) => {
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -40,7 +41,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Login />} />
-        <Route path="/user" element={<ProtectedRoute element={PatientHome} />} />
+        <Route path="/user" element={<ProtectedRoute element={UserDashboard} />} />
         <Route path="/doctor" element={<ProtectedRoute element={DoctorDashboard} />} />
       </Routes>
     </Router>

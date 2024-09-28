@@ -2,17 +2,6 @@ const express = require('express');
 const register = express.Router();
 const {db} = require('../firebase')
 
-register.get('/getAllUsers', async (req, res) => {
-    try {
-        const snapshot = await db.collection('userDetails').get();
-        const documents = snapshot.docs.map(doc => doc.data());
-        res.status(200).json(documents);
-    } catch (error){
-        console.log(error);
-        res.status(500).send(error);
-    }
-});
-
 register.post('/addUser', async (req, res) =>{
     try {
         const user = req.body;
@@ -94,7 +83,7 @@ register.get('/authenticate', async (req, res) => {
     }
 });
 
-register.post('/addPatient', async (req, res) => {
+register.post('/addPatientToDoctor', async (req, res) => {
     try {
         const snapshot = await db.collection('userDetails')
                     .where('username', '==', req.body.doctorName)
@@ -118,18 +107,7 @@ register.post('/addPatient', async (req, res) => {
     }
 });
 
-register.get('/getAllDoctors', async (req, res) => {
-    try {
-        const snapshot = await db.collection('doctors').doc('doctorList').get();
-        const data = snapshot.data();
-        res.status(200).json(data);
-    } catch (error){
-        console.log(error);
-        res.status(500).send(error);
-    }
-});
-
-register.get('/getPatients', async (req, res) => {
+register.get('/getPatientsForDoctor', async (req, res) => {
     try{
         const snapshot = await db.collection('userDetails')
                     .where('username', '==', req.session.user.username)
@@ -139,17 +117,25 @@ register.get('/getPatients', async (req, res) => {
         if(documents.length > 0){
             const doc = documents[0];
             const associated = doc.associated;
+            const associatedDetails = [];
 
-            if(associated.includes(req.body.patientName)){
+            for (const username of associated) {
+                const userSnapshot = await db.collection('userDetails')
+                    .where('username', '==', username)
+                    .get();
 
-
-            } else {
-                const response = {
-                    message: 'You do not have access to this patient',
-                    status: 205
+                const userDocs = userSnapshot.docs.map(doc => doc.data());
+                if (userDocs.length > 0) {
+                    let toadd = {};
+                    toadd.username = userDocs[0].username;
+                    toadd.dob = userDocs[0].dob;
+                    toadd.gender = userDocs[0].gender;
+                    toadd.blood_group = userDocs[0].blood_group;
+                    associatedDetails.push(toadd);
                 }
-                res.status(200).json(response);
             }
+
+            res.status(200).json(associatedDetails);
             
         } else {
             res.status(404).json({message: 'User not found'});
