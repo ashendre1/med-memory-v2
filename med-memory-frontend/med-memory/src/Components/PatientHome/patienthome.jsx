@@ -16,9 +16,17 @@ const PatientHome = ()  => {
       case 'uploadReports':
         return <div>Upload Reports Content</div>;
       case 'currentPrescription':
-        return <div>Current Prescription Content</div>;
+        return <div>Current Prescription Content If you have any questions about the hackathon, please post them in the #shellhacks channel in Discord, and we'll be in touch as soon as possible. Or if you prefer, you may reach out to an organizer privately on Discord or send an email tofiu@weareinit.org. Please do not withdraw your application if you entered the wrong info. Reach out to an organizer with your correct information and we will fix it for you.
+
+        Resources:If you have any questions about the hackathon, please post them in the #shellhacks channel in Discord, and we'll be in touch as soon as possible. Or if you prefer, you may reach out to an organizer privately on Discord or send an email tofiu@weareinit.org. Please do not withdraw your application if you entered the wrong info. Reach out to an organizer with your correct information and we will fix it for you.
+
+Resources:If you have any questions about the hackathon, please post them in the #shellhacks channel in Discord, and we'll be in touch as soon as possible. Or if you prefer, you may reach out to an organizer privately on Discord or send an email tofiu@weareinit.org. Please do not withdraw your application if you entered the wrong info. Reach out to an organizer with your correct information and we will fix it for you.
+
+Resources:If you have any questions about the hackathon, please post them in the #shellhacks channel in Discord, and we'll be in touch as soon as possible. Or if you prefer, you may reach out to an organizer privately on Discord or send an email tofiu@weareinit.org. Please do not withdraw your application if you entered the wrong info. Reach out to an organizer with your correct information and we will fix it for you.
+
+Resources:</div>;
       case 'addDoctors':
-        return <div>Add Doctors Content</div>;
+        return <div>Add Doctors { console.log("hello")}Content</div>;
       default:
         return <div>Graph Content</div>;
     }
@@ -34,6 +42,9 @@ const PatientHome = ()  => {
       </header>
       <div className="main-content">
         <aside>
+          <br></br>
+          <br></br>
+          <br></br>
           <button onClick={() => setActiveSection('graph')}>Graph</button>
           <button onClick={() => setActiveSection('uploadReports')}>Upload Reports</button>
           <button onClick={() => setActiveSection('currentPrescription')}>Current Prescription</button>
