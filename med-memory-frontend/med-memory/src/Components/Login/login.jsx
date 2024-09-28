@@ -8,11 +8,16 @@ const Login = () => {
     const navigate = useNavigate();
 
     const handleSubmit = async () => {
-        console.log('button clicked')
         let data = {
             username: document.querySelector('input[placeholder="Username"]').value,
-            password: document.querySelector('input[placeholder="Password"]').value,
+            password: document.querySelector('input[placeholder="Password"]').value
         };
+
+        if (action === "Sign Up") {
+            data = {...data, gender: document.querySelector('input[placeholder="Gender"]').value,
+                dob: document.querySelector('input[placeholder="Date of Birth"]').value,
+                blood_group: document.querySelector('input[placeholder="Blood Group"]').value}
+        }
 
         try {
             let result;
@@ -67,6 +72,19 @@ const Login = () => {
                         <option value="patient">Patient</option>
                         <option value="doctor">Doctor</option>
                     </select>
+
+                    <div className="input">
+                        <input type="text" placeholder="Gender"/>
+                    </div>
+
+                    <div className="input">
+                        <input type="text" placeholder="Date of Birth"/>
+                    </div>
+
+                    <div className="input">
+                        <input type="text" placeholder="Blood Group"/>
+                    </div>
+                    
                 </div>}
                 
             </div>

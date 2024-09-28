@@ -17,9 +17,6 @@ const apiCall = async (endpoint, method, data) => {
             body: method !== 'GET' ? JSON.stringify(data) : null
         });
 
-        // if (!response.ok) {
-        //     console.log(g)
-        // }
 
         return await response.json();
     } catch (error) {
@@ -30,5 +27,5 @@ const apiCall = async (endpoint, method, data) => {
 
 export const registerUser = (data) => apiCall('/register/addUser', 'POST', data);
 export const loginUser = (data) => apiCall('/register/authenticate', 'GET', data);
-export const checkSession = () => apiCall('/check-session', 'GET');
+export const checkSession = () => apiCall('/userSession/check-session', 'GET');
 export const uploadPrescription = (data) => apiCall('/prescription/upload', 'POST', data);

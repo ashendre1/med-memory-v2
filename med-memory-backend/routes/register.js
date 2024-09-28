@@ -27,6 +27,9 @@ register.post('/addUser', async (req, res) =>{
         const userDocument = {
             username: user.username,
             password: user.password,
+            gender: user.gender,
+            dob: user.dob,
+            blood_group: user.blood_group,
             type: user.type,
             associated: []
         }
