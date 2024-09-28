@@ -1,0 +1,89 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f2f5;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  
+  header {
+    background-color: #0078d4;
+    padding: 20px;
+    text-align: center;
+    color: white;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+  }
+  
+  header button {
+    background-color: #0078d4;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    flex: 1;
+    margin: 0 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    border-radius: 4px;
+  }
+  
+  header button.active {
+    background-color: #005a9e;
+  }
+  
+  header button:hover {
+    background-color: #005a9e;
+    transform: translateY(-2px);
+  }
+  
+  main {
+    flex: 1;
+    padding: 80px 20px 20px; /* Adjust padding to account for fixed header */
+    text-align: center;
+  }
+  
+  main h2 {
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  main input[type="file"] {
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  main input[type="file"]::-webkit-file-upload-button {
+    background-color: #0078d4;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    border-radius: 4px;
+  }
+  
+  main input[type="file"]::-webkit-file-upload-button:hover {
+    background-color: #005a9e;
+  }

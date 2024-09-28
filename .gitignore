@@ -1,0 +1,4 @@
+med-memory-backend/credentials.json
+med-memory-backend/node_modules
+med-memory-backend/.env
+med-memory-frontend/med-memory/node_modules
