@@ -6,16 +6,13 @@ const path = require('path');
 const { format } = require('util');
 const { v4: uuidv4 } = require('uuid'); 
 
-// Configure multer for file upload
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-// Route to handle image upload
-prescriptions.post('/upload', upload.single('image'), async (req, res) => {
+prescriptions.post('/uploadPrescriptionForUser', upload.single('image'), async (req, res) => {
     try {
         console.log(req.session.user)
         if (!req.file) {
-            console.log('no dice')
             return res.status(400).send('No file uploaded.');
         }
         
@@ -37,9 +34,10 @@ prescriptions.post('/upload', upload.single('image'), async (req, res) => {
             await blob.makePublic();
 
             await db.collection('images').add({
-                userId: req.session.user.username,
+                username: req.body.username,
                 imageUrl: publicUrl,
-                uploadedAt: new Date()
+                uploadedAt: new Date(),
+                diagnosis: req.body.diagnosis
             });
 
             res.status(200).send({ imageUrl: publicUrl });
@@ -57,8 +55,7 @@ prescriptions.post('/upload', upload.single('image'), async (req, res) => {
 prescriptions.get('/getMyPrescription', async (req, res) => {
     try {
         const userId = req.session.user.username;
-        console.log(userId)
-        const snapshot = await db.collection('images').where('userId', '==', userId).get();
+        const snapshot = await db.collection('images').where('username', '==', userId).get();
 
         if (snapshot.empty) {
             return res.status(404).send('No images found for this user.');
@@ -69,13 +66,42 @@ prescriptions.get('/getMyPrescription', async (req, res) => {
             images.push(doc.data());
         });
 
-        console.log(images)
-
-        res.status(200).json(images);
+        images.sort((a, b) => b.uploadedAt - a.uploadedAt);
+        const latestImage = images[0];
+        console.log(latestImage)
+        res.status(200).json(latestImage);
     } catch (error) {
         console.error('Error retrieving images:', error);
         res.status(500).send('Internal server error.');
     }
 });
+
+prescriptions.post('/bulkUpload', async (req, res) => {
+    try {
+        const dataArray = req.body;
+        const batch = db.batch();
+        dataArray.forEach(details => {
+            let reportDocument = {
+                username: "john",
+                uploadedAt: details.date,
+                diagnosis: details.diagnosis
+            }
+            const docRef = db.collection('images').doc();
+            batch.set(docRef, reportDocument);
+        });
+
+        batch.commit()
+        .then(() => {
+            console.log('Batch upload successful');
+        })
+        .catch((error) => {
+            console.log('Batch upload failed');
+    });
+
+    } catch(error){
+        console.log(error);
+    }
+});
+
 
 module.exports = prescriptions;
