@@ -59,17 +59,4 @@ reports.get('/getReports', async(req, res) => {
     }
 });
 
-reports.get('/getiReports', async(req, res) => {
-    try{
-        
-        const documents = {"ok" : "snapshot.docs.map(doc => doc.data())"};
-
-        res.status(200).json(documents);
-
-    } catch (error){
-        console.log(error);
-        res.status(500).send(error);
-    }
-});
-
 module.exports = reports;
