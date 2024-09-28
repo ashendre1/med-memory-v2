@@ -40,7 +40,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Login />} />
-        <Route path="/user" element={<ProtectedRoute element={PatientHome} />} />
+        <Route path="/user" element={<ProtectedRoute element={UserDashboard} />} />
         <Route path="/doctor" element={<ProtectedRoute element={DoctorDashboard} />} />
       </Routes>
     </Router>

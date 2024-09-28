@@ -9,12 +9,13 @@ const registerRoutes = require('./routes/register');
 const reportsRoutes = require('./routes/reports');
 const prescriptionRoutes = require('./routes/prescription');
 const userSession = require('./routes/userSession');
+const doctorlist = require('./routes/doctorlist');
 
 app.use(bodyParser.json());
 app.use(cookieParser());
 
 app.use(cors({
-    origin: 'http://localhost:3000', // Replace with your frontend's origin
+    origin: 'http://localhost:3000',
     credentials: true
 }));
 
@@ -32,6 +33,7 @@ app.use('/register', registerRoutes);
 app.use('/reports', reportsRoutes);
 app.use('/prescription', prescriptionRoutes);
 app.use('/userSession', userSession);
+app.use('/doctorlist', doctorlist);
 
 
 app.listen(port, () => {

@@ -87,3 +87,18 @@ body {
   main input[type="file"]::-webkit-file-upload-button:hover {
     background-color: #005a9e;
   }
+
+  .image-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px; /* Add gap between images */
+    justify-content: center; /* Center the images */
+  }
+  
+  .gallery-image {
+    width: 150px; /* Fixed width */
+    height: 150px; /* Fixed height */
+    object-fit: cover; /* Ensure the image covers the area without distortion */
+    border-radius: 8px; /* Optional: Add rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Add a shadow for better appearance */
+  }
