@@ -7,6 +7,7 @@ import DoctorDashboard from './Components/DoctorDashboard/doctor.jsx';
 import PatientHome from './Components/PatientHome/patienthome.jsx';
 import { checkSession } from './Api';
 
+
 const ProtectedRoute = ({ element: Component, ...rest }) => {
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
