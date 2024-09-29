@@ -104,4 +104,20 @@ prescriptions.post('/bulkUpload', async (req, res) => {
 });
 
 
+prescriptions.get('/getDiagnosisForLLM', async (req, res) => {
+    try {
+        const user = req.query.username;
+        const snapshot = await db.collection('images')
+            .where('username', '==', user)
+            .get();
+
+        const documents = snapshot.docs.map(doc => doc.data());
+        res.status(200).json(documents);
+
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+
 module.exports = prescriptions;

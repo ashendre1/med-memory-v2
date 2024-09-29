@@ -1,0 +1,4 @@
+pdfplumber
+re
+fastapi
+cors

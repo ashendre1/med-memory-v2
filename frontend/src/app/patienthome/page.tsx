@@ -9,6 +9,7 @@ import { LogOut, BarChart, Upload, FileText, UserPlus } from 'lucide-react'
 import getReports from '@/components/services/getReports'
 import { checkSession } from '../../../API';
 import { useRouter } from 'next/navigation';
+import axios from 'axios';
 
 export default function PatientHome() {
   
@@ -17,7 +18,7 @@ export default function PatientHome() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [user, setUser] = useState<any>(null); // Store user details
     const router = useRouter();
-  
+    const api_plot= "http://localhost:8501?username=" + user
     // Check session on component load
     useEffect(() => {
       const verifySession = async () => {
@@ -39,6 +40,29 @@ export default function PatientHome() {
       verifySession();
     }, [router]);
 
+    const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+      console.log(event)
+      const file = event.target.files[0];
+      if (!file) {
+          console.error("No file selected.");
+          return;
+      }
+  
+      console.log('Selected file:', file);
+  
+      const uploadFormData = new FormData();
+      uploadFormData.append('file', file);
+  
+      try {
+        console.log('Start');
+        const response = await axios.post('http://127.0.0.1:8000/upload', uploadFormData);
+  
+        console.log('Upload response:', response);
+  
+      } catch (error) {
+        console.error('Error uploading file:', error);
+      }
+  };
 
 
 
@@ -48,9 +72,6 @@ export default function PatientHome() {
 
 
 
-
-
-    
 
  
     const [doctorName, setDoctorName] = useState('');
@@ -87,48 +108,13 @@ export default function PatientHome() {
     switch (activeSection) {
       case 'graph':
         return (
-          <Card>
-            <CardHeader>
-              <CardTitle>Blood Pressure Over Time</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="w-full h-64 flex items-end justify-between space-x-2">
-                {[
-                  { month: 'Jan', systolic: 120, diastolic: 80 },
-                  { month: 'Feb', systolic: 118, diastolic: 78 },
-                  { month: 'Mar', systolic: 122, diastolic: 82 },
-                  { month: 'Apr', systolic: 121, diastolic: 79 },
-                  { month: 'May', systolic: 117, diastolic: 77 },
-                ].map((data, index) => (
-                  <div key={index} className="flex flex-col items-center">
-                    <div className="flex flex-col items-center w-12">
-                      <div 
-                        className="bg-primary w-6" 
-                        style={{ height: `${data.systolic}px` }}
-                        aria-label={`Systolic: ${data.systolic}`}
-                      ></div>
-                      <div 
-                        className="bg-secondary w-6 mt-1" 
-                        style={{ height: `${data.diastolic}px` }}
-                        aria-label={`Diastolic: ${data.diastolic}`}
-                      ></div>
-                    </div>
-                    <span className="mt-2 text-sm">{data.month}</span>
-                  </div>
-                ))}
-              </div>
-              <div className="flex justify-center mt-4 space-x-4">
-                <div className="flex items-center">
-                  <div className="w-4 h-4 bg-primary mr-2"></div>
-                  <span>Systolic</span>
-                </div>
-                <div className="flex items-center">
-                  <div className="w-4 h-4 bg-secondary mr-2"></div>
-                  <span>Diastolic</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <iframe
+              src= {api_plot}
+              width="100%"
+              height="600px"
+              frameBorder="0"
+              title="Visualization"
+            ></iframe>
         )
       case 'uploadReports':
         return (
@@ -147,10 +133,10 @@ export default function PatientHome() {
                   <Input id="report-date" type="date" />
                 </div>
                 <div>
-                  <Label htmlFor="report-file">Upload File</Label>
-                  <Input id="report-file" type="file" />
+                  <Label htmlFor="report-file" >Upload File</Label>
+                  <Input id="report-file" type="file" onChange={handleFileChange}/>
                 </div>
-                <Button type="submit">Upload Report</Button>
+                <Button type="submit" >Upload Report</Button>
               </form>
             </CardContent>
           </Card>
