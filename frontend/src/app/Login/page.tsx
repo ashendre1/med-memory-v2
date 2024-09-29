@@ -31,6 +31,7 @@ export default function AuthPage() {
                         router.push('/patienthome');
                     } else {
                         console.log("normal doctor");
+                        router.push('/doctordash');
                     }
                 } else {
                     alert('Invalid credentials');

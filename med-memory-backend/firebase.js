@@ -17,7 +17,7 @@ admin.initializeApp({
         auth_provider_x509_cert_url: process.env.FIREBASE_AUTH_PROVIDER_X509_CERT_URL,
         client_x509_cert_url: process.env.FIREBASE_CLIENT_X509_CERT_URL
     }),
-    storageBucket: 'med-memory-112f5.appspot.com'
+    storageBucket: 'shell-hacks-2024.appspot.com'
 });
 
 const db = getFirestore();

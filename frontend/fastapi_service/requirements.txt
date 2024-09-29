@@ -1,4 +1,5 @@
-pdfplumber
-re
-fastapi
-cors
+pdfplumber 
+fastapi[all] 
+python-multipart
+uvicorncd 
+axios

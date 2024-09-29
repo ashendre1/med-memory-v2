@@ -54,9 +54,9 @@ prescriptions.post('/uploadPrescriptionForUser', upload.single('image'), async (
 // Route to retrieve images for a user
 prescriptions.get('/getMyPrescription', async (req, res) => {
     try {
-        const userId = req.session.user.username;
+        const userId = req.query.user;
         const snapshot = await db.collection('images').where('username', '==', userId).get();
-
+        
         if (snapshot.empty) {
             return res.status(404).send('No images found for this user.');
         }
@@ -69,7 +69,7 @@ prescriptions.get('/getMyPrescription', async (req, res) => {
         images.sort((a, b) => b.uploadedAt - a.uploadedAt);
         const latestImage = images[0];
         console.log(latestImage)
-        res.status(200).json(latestImage);
+        res.json({ imageUrl: latestImage.imageUrl })
     } catch (error) {
         console.error('Error retrieving images:', error);
         res.status(500).send('Internal server error.');

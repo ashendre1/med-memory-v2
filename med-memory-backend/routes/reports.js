@@ -11,7 +11,8 @@ reports.post('/addReportForUser', async(req, res) => {
             platelets: details.platelets,
             hemoglobin: details.hemoglobin,
             RBC: details.RBC,
-            date: details.date
+            date: details.date,
+            medicines_taken: details.medicines_taken
         }
         console.log('reportDocument', reportDocument);
         await db.collection('reports').add(reportDocument);
@@ -30,11 +31,12 @@ reports.post('/addReportForMe', async(req, res) => {
     try{
         const details = req.body;
         const reportDocument = { 
-            username: session.req.user.username,
+            username: details.username,
             platelets: details.platelets,
             hemoglobin: details.hemoglobin,
             RBC: details.RBC,
-            date: details.date
+            date: details.date,
+            medicines_taken: details.medicines_taken
         }
         console.log('reportDocument', reportDocument);
         await db.collection('reports').add(reportDocument);

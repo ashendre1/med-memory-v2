@@ -20,7 +20,7 @@ patterns = {
     'HCT': r'hct.*?(\d+(\.\d+)?)',
     'MCV': r'mcv.*?(\d+(\.\d+)?)',
     'PLT': r'plt.*?(\d+(\.\d+)?)',
-    'Platelet': r'platelet.*?(\d+(\.\d+)?)',
+    'Platelets': r'platelet.*?(\d+(\.\d+)?)',
     'MCH': r'mch.*?(\d+(\.\d+)?)', 
     'MCHC': r'mchc.*?(\d+(\.\d+)?)'
 }

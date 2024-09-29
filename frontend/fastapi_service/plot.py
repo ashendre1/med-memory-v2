@@ -42,19 +42,24 @@ if uploaded_file.content is not None:
     # Read the uploaded CSV file
     df = pd.read_json(uploaded_file.content.decode('utf-8'))
     # print(df.head())
+
+# New UpdateCheck
     df.dropna(inplace=True)
-    unique_medicines = pd.Series([med.strip() for sublist in df['medicine'] for med in sublist.split(',')]).unique()
+    df['date'] = pd.to_datetime(df['date'])
+    df = df.sort_values(by='date')
+    df = df.head(30)
+    unique_medicines = pd.Series([med.strip() for sublist in df['medicines_taken'] for med in sublist.split(',')]).unique()
 
     
     # Convert date column to datetime format
-    df['date'] = pd.to_datetime(df['date'])
+    
     df['date_num'] = df['date'].apply(lambda date: mdates.date2num(date))
     # Dropdown to select which x to plot
     x=df['date_num']
-
+    columns=['RBC','platelets','hemoglobin']
     # Display the dataframe
     
-    attribute=st.selectbox('Select the attribute to plot', df.columns[1:-2], index=0)
+    attribute=st.selectbox('Select the attribute to plot', columns, index=0)
     # Dropdown to select which y to plot
     y = df[attribute]  # Exclude 'date' and 'medicine'
 
@@ -65,18 +70,19 @@ if uploaded_file.content is not None:
     ax.plot(x, y, marker='o',markersize=0, label="Line Plot with Points")  # Line plot with markers
 
     # Get the unique medicines in the dataset
-    unique_medicines = pd.Series([med.strip() for sublist in df['medicine'] for med in sublist.split(',')]).unique()
+    unique_medicines = pd.Series([med.strip() for sublist in df['medicines_taken'] for med in sublist.split(',')]).unique()
     color_map = assign_colors_to_values(unique_medicines)
 
     # Create a color map for the medicines
     colors = plt.cm.get_cmap('Set1', len(unique_medicines))  # Use Set1 color map with a color for each medicine
-    val=(sum(y)//len(y))/50 
-    val=val if val>3 else 50
+    dic_size={'RBC':20,
+              'hemoglobin':20,
+              'platelets':20000}
     # Loop through each unique medicine
     for i in range(len(x)):
-        size = val# Size of the pie chart
+        size = dic_size[attribute]# Size of the pie chart
         inset_ax = ax.inset_axes([x[i] - size / 2, y[i] - size / 2, size, size], transform=ax.transData)
-        temp_arr = df['medicine'][i].split(',')
+        temp_arr = df['medicines_taken'][i].split(',')
         
 
         # Create the pie chart in the inset axis with correct colors

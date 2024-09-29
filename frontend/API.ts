@@ -37,3 +37,5 @@ export const signupUser = (data: ApiCallData): Promise<any> => apiCall('/registe
 export const loginUser = (data: ApiCallData): Promise<any> => apiCall('/register/authenticate', 'GET', data);
 export const checkSession = (): Promise<any> => apiCall('/userSession/check-session', 'GET');
 export const uploadPrescription = (data: ApiCallData): Promise<any> => apiCall('/prescription/upload', 'POST', data);
+export const getPatientDetails = (): Promise<any> => apiCall('/register/getPatientsForDoctor', 'GET');
+export const user_logout = (): Promise<any> => apiCall('/userSession/logout', 'POST');

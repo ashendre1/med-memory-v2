@@ -7,18 +7,32 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { LogOut, BarChart, Upload, FileText, UserPlus } from 'lucide-react'
 import getReports from '@/components/services/getReports'
-import { checkSession } from '../../../API';
+import { checkSession, user_logout } from '../../../API';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
+import getdoctorService from '@/components/services/getdoctorService'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import add_doctorservice from '@/components/services/add_doctorservice'
 
 export default function PatientHome() {
-  
-    const [activeSection, setActiveSection] = useState('graph')
 
+  const[doctors_list, setDoctorsList] = useState([])
+const [selectedDoctor, setSelectedDoctor] = useState("")
+  
+    const [activeSection, setActiveSection] = useState('graph');
+    const [showUpload, setShowUpload] = useState(false);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [user, setUser] = useState<any>(null); // Store user details
     const router = useRouter();
     const api_plot= "http://localhost:8501?username=" + user
+    const [formData, setFormData] = useState({
+      hemoglobin: '',
+      RBC: '',
+      platelets: '',
+      date: '',
+      medicines_taken:'',
+      username:''
+    });
     // Check session on component load
     useEffect(() => {
       const verifySession = async () => {
@@ -29,11 +43,11 @@ export default function PatientHome() {
             console.log("is Authenticated" + result.user)
             setUser(result.user); // Store user details
           } else {
-            router.push('/login'); // Redirect to login if not authenticated
+            router.push('/Login'); // Redirect to login if not authenticated
           }
         } catch (error) {
           console.error('Error checking session:', error);
-          router.push('/login'); // Redirect to login on error
+          router.push('/Login'); // Redirect to login on error
         }
       };
   
@@ -58,20 +72,38 @@ export default function PatientHome() {
         const response = await axios.post('http://127.0.0.1:8000/upload', uploadFormData);
   
         console.log('Upload response:', response);
-  
+        setFormData({
+        hemoglobin: response.data.Hemoglobin || '',
+        RBC: response.data.RBC || '',
+        platelets: response.data.Platelet || '',
+        date: new Date().toISOString().split('T')[0],
+        medicines_taken:'',
+        username: user
+      });
       } catch (error) {
         console.error('Error uploading file:', error);
       }
   };
+  
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+  
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    console.log('Edited data to submit:', formData);
 
-
-
-
-
-
-
-
-
+    try {
+      const response = await axios.post('http://localhost:9090/reports/addReportForMe', formData);
+      console.log('Edits submitted successfully:', response.data);
+    } catch (error) {
+      console.error('Error submitting edits:', error);
+    }
+  };
 
  
     const [doctorName, setDoctorName] = useState('');
@@ -79,30 +111,58 @@ export default function PatientHome() {
     const [doctorPhone, setDoctorPhone] = useState('');
     const [doctorEmail, setDoctorEmail] = useState('');
   
+  
     const handleSubmitadddoc = async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-  
-      const doctorDetails = {
-        name: doctorName,
-        specialty: doctorSpecialty,
-        phone: doctorPhone,
-        email: doctorEmail,
-      };
-  
-      try {
-        getReports.getLinePts().then((dumy_data: any) => {
-            console.log(dumy_data);
-          });
+      if (selectedDoctor != ""){
+        try {
+            add_doctorservice.addthedoc(selectedDoctor).then((dumy_data: any) => {
+                console.log(dumy_data);
+              });
 
-      } catch (error) {
-        console.error('Error adding doctor:', error);
+          } catch (error) {
+            console.error('Error adding doctor:', error);
+          }
       }
     };
 
-  const handleLogout = () => {
-    // Implement logout logic here
-    console.log('Logout clicked')
-  }
+    const handleLogout = () => {
+        const logout = async () => {
+            try {
+                const result = await user_logout();
+                if (result.status === 200) {
+                    console.log(result.data.message); // Log the JSON response message
+                    window.location.reload(); // Reload the page after successful logout
+                }
+            } catch (error) {
+                console.error('Error logging out:', error);
+            }
+        };
+
+        logout();
+    };
+
+    fetch('http://localhost:9090/prescription/getMyPrescription?user='+user)
+            .then(response => response.json())
+            .then(data => {
+                const imgElement = document.getElementById('prescriptionImage');
+                imgElement.src = data.imageUrl;  // Set the image source
+                console.log(data.imageUrl);
+            })
+            .catch(err => console.error('Error fetching image:', err));
+
+
+
+
+
+
+    useEffect(() => {
+        getdoctorService.getdocs().then((doc_data: any) => {
+            setDoctorsList(doc_data.names);
+          });
+          console.log("doctorslist call")
+
+    },[])
 
   const renderContent = () => {
     switch (activeSection) {
@@ -123,22 +183,76 @@ export default function PatientHome() {
               <CardTitle>Upload Medical Reports</CardTitle>
             </CardHeader>
             <CardContent>
-              <form className="space-y-4">
-                <div>
-                  <Label htmlFor="report-type">Report Type</Label>
-                  <Input id="report-type" placeholder="e.g., Blood Test, X-Ray" />
-                </div>
-                <div>
-                  <Label htmlFor="report-date">Report Date</Label>
-                  <Input id="report-date" type="date" />
-                </div>
-                <div>
-                  <Label htmlFor="report-file" >Upload File</Label>
-                  <Input id="report-file" type="file" onChange={handleFileChange}/>
-                </div>
-                <Button type="submit" >Upload Report</Button>
-              </form>
-            </CardContent>
+            <div className="space-y-2">
+          <Label htmlFor="file-upload">Upload File</Label>
+          <Input
+            id="file-upload"
+            type="file"
+            onChange={handleFileChange}
+          />
+        </div>
+
+        {formData && (<form onSubmit={handleFormSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="hemoglobin">Hemoglobin</Label>
+                <Input
+                  id="hemoglobin"
+                  type="text"
+                  name="Hemoglobin"
+                  value={formData.hemoglobin}
+                  onChange={handleInputChange}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="rbc">RBC</Label>
+                <Input
+                  id="rbc"
+                  type="text"
+                  name="RBC"
+                  value={formData.RBC}
+                  onChange={handleInputChange}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="platelet">Platelet</Label>
+                <Input
+                  id="platelet"
+                  type="text"
+                  name="platelets"
+                  value={formData.platelets}
+                  onChange={handleInputChange}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="medicines">Medicines (separated by commas)</Label>
+                <Input
+                  id="medicines"
+                  type="text"
+                  name="medicines_taken"
+                  value={formData.medicines_taken}
+                  placeholder="e.g., Paracetamol, Ibuprofen"
+                  onChange={handleInputChange}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="testDate">Test Date</Label>
+                <Input
+                  id="testDate"
+                  type="date"
+                  name="date"
+                  value={formData.date}
+                  onChange={handleInputChange}
+                />
+              </div>
+              
+              <Button type="submit" className="w-full">Submit Edits</Button>
+            </form>
+            )}
+          </CardContent>
           </Card>
         )
       case 'currentPrescription':
@@ -148,43 +262,39 @@ export default function PatientHome() {
               <CardTitle>Current Prescription</CardTitle>
             </CardHeader>
             <CardContent>
-              <ul className="list-disc pl-5 space-y-2">
-                <li>Lisinopril 10mg - 1 tablet daily</li>
-                <li>Metformin 500mg - 1 tablet twice daily with meals</li>
-                <li>Atorvastatin 20mg - 1 tablet at bedtime</li>
-                <li>Aspirin 81mg - 1 tablet daily</li>
-              </ul>
+              
+              <img id="prescriptionImage" alt="Prescription Image" />
             </CardContent>
           </Card>
         )
       case 'addDoctors':
         return (
           <Card>
-            <CardHeader>
-              <CardTitle>Add New Doctor</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <form className="space-y-4">
-                <div>
-                  <Label htmlFor="doctor-name">Doctor's Name</Label>
-                  <Input id="doctor-name" placeholder="Dr. John Doe" />
-                </div>
-                <div>
-                  <Label htmlFor="doctor-specialty">Specialty</Label>
-                  <Input id="doctor-specialty" placeholder="e.g., Cardiologist, Neurologist" />
-                </div>
-                <div>
-                  <Label htmlFor="doctor-phone">Phone Number</Label>
-                  <Input id="doctor-phone" type="tel" placeholder="(123) 456-7890" />
-                </div>
-                <div>
-                  <Label htmlFor="doctor-email">Email</Label>
-                  <Input id="doctor-email" type="email" placeholder="doctor@example.com" />
-                </div>
-                <Button type="submit" onClick={handleSubmitadddoc}>Add Doctor</Button>
-              </form>
-            </CardContent>
-          </Card>
+          <CardHeader>
+            <CardTitle>Add New Doctor</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form className="space-y-4">
+              <div>
+              <Label htmlFor="doctor-select">Doctor's Name</Label>
+              <Select onValueChange={setSelectedDoctor} value={selectedDoctor}>
+                  <SelectTrigger id="doctor-select" className="w-full">
+                  <SelectValue placeholder="Select a doctor" />
+                  </SelectTrigger>
+                  <SelectContent>
+                  {doctors_list.map((doctor) => (
+                      <SelectItem key={doctor} value={doctor}>
+                      {doctor}
+                      </SelectItem>
+                  ))}
+                  </SelectContent>
+              </Select>
+              </div>
+
+              <Button type="submit" onClick={handleSubmitadddoc}>Add Doctor</Button>
+            </form>
+          </CardContent>
+        </Card>
         )
       default:
         return <div>Graph Content</div>
