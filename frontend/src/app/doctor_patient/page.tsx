@@ -45,6 +45,7 @@ export default function DoctorPage() {
 
     const formData = new FormData(event.currentTarget); // Automatically capture all form fields
     formData.append('username' , patient)
+    console.log('yellow', formData)
     try {
       console.log('Start');
       const response = await axios.post('http://127.0.0.1:9090/prescription/uploadPrescriptionForUser', formData, {
@@ -53,6 +54,7 @@ export default function DoctorPage() {
         },
       });
       console.log('Upload response:', response);
+      alert('Upload successful!');
     } catch (error) {
       console.error('Error uploading prescription:', error);
     }
@@ -78,10 +80,10 @@ export default function DoctorPage() {
       setFormData({
         hemoglobin: response.data.Hemoglobin || '',
         RBC: response.data.RBC || '',
-        platelets: response.data.Platelet || '',
+        platelets: response.data.Platelet || '200',
         date: new Date().toISOString().split('T')[0],
         username: '',
-        medicines_taken:''
+        medicines_taken:'Paracitamol'
       });
     } catch (error) {
       console.error('Error uploading file:', error);
@@ -105,7 +107,7 @@ const handleFormSubmit = async (e) => {
     formData['username']=patient;
 
     const response = await axios.post('http://localhost:9090/reports/addReportForUser', formData);
-    console.log('Edits submitted successfully:', response.data);
+    alert('Upload successful!');
   } catch (error) {
     console.error('Error submitting edits:', error);
   }

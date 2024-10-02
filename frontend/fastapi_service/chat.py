@@ -2,11 +2,12 @@ import streamlit as st
 import requests
 
 query_params = st.query_params
-
+print(query_params)
 # Extract the 'user' parameter from the query string
 user = query_params.get('username')
+print(user)
 # File uploader widget
-api_endpoint = "http://localhost:9090/prescription/getDiagnosisForLLM?username="+user
+api_endpoint = "http://localhost:9090/prescription/getDiagnosisForLLM?username="+str(user)
 
 data=requests.get(api_endpoint)
 data=data.content.decode('utf-8')

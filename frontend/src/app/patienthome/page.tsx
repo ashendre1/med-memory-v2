@@ -118,6 +118,7 @@ const [selectedDoctor, setSelectedDoctor] = useState("")
         try {
             add_doctorservice.addthedoc(selectedDoctor).then((dumy_data: any) => {
                 console.log(dumy_data);
+                alert('Selected doctor has access to your history')
               });
 
           } catch (error) {

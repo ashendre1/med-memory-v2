@@ -95,7 +95,11 @@ register.post('/addPatientToDoctor', async (req, res) => {
             const doc = documents[0];
             console.log('here is the doc ', doc);
             const associated = doc.associated;
-            associated.push(req.session.user.username);
+            console.log('associated ', associated)
+            if(!associated.includes(req.session.user.username)){
+                console.log('here')
+                associated.push(req.session.user.username);
+            }
             await snapshot.docs[0].ref.update({associated});
             res.status(200).json({message: 'Patient added successfully' });
         } else {

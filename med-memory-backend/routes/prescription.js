@@ -11,7 +11,7 @@ const upload = multer({ storage: storage });
 
 prescriptions.post('/uploadPrescriptionForUser', upload.single('image'), async (req, res) => {
     try {
-        console.log(req.session.user)
+        
         if (!req.file) {
             return res.status(400).send('No file uploaded.');
         }
@@ -55,6 +55,7 @@ prescriptions.post('/uploadPrescriptionForUser', upload.single('image'), async (
 prescriptions.get('/getMyPrescription', async (req, res) => {
     try {
         const userId = req.query.user;
+        console.log('here is the id', userId)
         const snapshot = await db.collection('images').where('username', '==', userId).get();
         
         if (snapshot.empty) {
@@ -63,11 +64,16 @@ prescriptions.get('/getMyPrescription', async (req, res) => {
 
         const images = [];
         snapshot.forEach(doc => {
-            images.push(doc.data());
+            if (doc.data().imageUrl !== undefined) {
+                images.push(doc.data());
+            }
         });
 
         images.sort((a, b) => b.uploadedAt - a.uploadedAt);
         const latestImage = images[0];
+
+        console.log('images are here ', images)
+
         console.log(latestImage)
         res.json({ imageUrl: latestImage.imageUrl })
     } catch (error) {
